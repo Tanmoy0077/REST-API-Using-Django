@@ -1,3 +1,4 @@
+from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.db import models
 
 
@@ -12,13 +13,30 @@ class FacilityDetails(models.Model):
         return self.facility_name
 
 
-class User(models.Model):
+class UserManager(BaseUserManager):
+    def create_user(self, user_id, password=None, **extra_fields):
+        if not user_id:
+            raise ValueError('The User ID must be set')
+        user = self.model(user_id=user_id, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-    user_id = models.CharField(max_length=10, primary_key=True)
-    password = models.CharField(max_length=30)
+    def create_superuser(self, user_id, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(user_id, password, **extra_fields)
+
+class User(AbstractBaseUser):
+    user_id = models.CharField(max_length=10, unique=True, primary_key=True)
     designation = models.CharField(max_length=20)
     bldg_no = models.ForeignKey(FacilityDetails, on_delete=models.CASCADE, db_column='bldg_no')
 
+    # Define required fields
+    USERNAME_FIELD = 'user_id'
+    REQUIRED_FIELDS = ['designation', 'bldg_no']
+
+    objects = UserManager()
     class Meta:
         db_table = 'user'
         constraints = [
@@ -28,9 +46,9 @@ class User(models.Model):
             )
         ]
 
+
     def __str__(self):
         return self.user_id
-
 
 class WasteType(models.Model):
 
