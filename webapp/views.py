@@ -1,13 +1,13 @@
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
-
+from rest_framework import status
 from .models import User
 from .serializer import UserSerializer
-from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdminUser
 
 class UserList(APIView):
     def get(self, request):
@@ -37,11 +37,12 @@ class UserDetail(APIView):
 
     def put(self, request, pk):
         user = self.get_object(pk)
-        serializer = UserSerializer(user, data=request.data)
+        serializer = UserSerializer(user, data=request.data, partial=True)  # Set partial=True for partial updates
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         user = get_object_or_404(User, pk=pk)
@@ -63,15 +64,26 @@ class LoginView(APIView):
             designation = user.designation.lower()
 
             redirect_map = {
-                'admin': 'admin-page',
-                'director': 'director-page',
-                'sending engineer': 'sending-engineer-page',
-                'receiving engineer': 'receiving-engineer-page',
-                'sending manager': 'sending-manager-page',
-                'receiving manager': 'receiving-manager-page'
+                'admin': 'admin',
+                'director': 'dashboard',
+                'sending engineer': 'sending-engineer',
+                'receiving engineer': 'receiving-engineer',
+                'sending manager': 'sending-manager',
+                'receiving manager': 'receiving-manager'
             }
 
             redirect_page = redirect_map.get(designation, 'invalid-designation-page')
-            return Response({'token': token.key, 'redirect': redirect_page})
+            return Response({'token': token.key, 'redirect': redirect_page, 'designation': designation})
 
         return Response({'error': 'Invalid user_id or password'}, status=401)
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        try:
+            token_key = request.headers.get('Authorization', '').split(' ')[1]
+            token = Token.objects.get(key=token_key)
+            token.delete()
+            return Response({"detail": "Successfully logged out."}, status=status.HTTP_204_NO_CONTENT)
+        except Token.DoesNotExist:
+            return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
