@@ -75,6 +75,7 @@ class LoginView(APIView):
                 'receiving engineer': 'receiving-engineer',
                 'sending manager': 'sending-manager',
                 'receiving manager': 'receiving-manager',
+                'disposing engineer': 'disposing-engineer',
                 'disposing manager': 'disposing-manager'
             }
 
