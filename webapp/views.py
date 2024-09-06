@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -144,6 +144,14 @@ class FacilityDetailsDetail(APIView):
         return Response({'error': 'Facility not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
+class UniqueFacilityNames(APIView):
+    def get(self, request, format=None):
+        unique_facilities = FacilityDetails.objects.values_list('facility_name', flat=True).distinct()
+        unique_facility_list = list(unique_facilities)
+
+        return Response(unique_facility_list, status=status.HTTP_200_OK)
+
+
 class WasteTypeListCreate(APIView):
     def get(self, request, format=None):
         waste_types = WasteType.objects.all()
@@ -274,6 +282,13 @@ class FormDetailsAPIView(APIView):
         form_details = self.get_object(pk)
         form_details.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class FormDetailsListView(generics.ListAPIView):
+    serializer_class = FormDetailsSerializer
+
+    def get_queryset(self):
+        request_no = self.kwargs.get('request_no')
+        return FormDetails.objects.filter(request_no=request_no)
 
 
 # DisposalDetails API View

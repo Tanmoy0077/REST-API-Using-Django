@@ -107,7 +107,7 @@ class FormDetails(models.Model):
     request_no = models.ForeignKey(RequestStatus, on_delete=models.CASCADE)
     facility_name = models.CharField(max_length=30, blank=True, null=True)
     bldg_no = models.ForeignKey(FacilityDetails, on_delete=models.CASCADE,
-                                db_column='bldg_no')  # You might need to define FacilityDetails model as well.
+                                db_column='bldg_no')
     unit = models.CharField(max_length=5, choices=UNIT_CHOICES)
     segment_ref_no = models.CharField(max_length=30)
     dispatch_date = models.DateField()
