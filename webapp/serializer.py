@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, FacilityDetails, WasteType, DisposalDetails, RequestStatus, FormDetails
+from .models import User, FacilityDetails, WasteType, DisposalDetails, RequestStatus, FormDetails, Remarks
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -53,4 +53,10 @@ class FormDetailsSerializer(serializers.ModelSerializer):
 class DisposalDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = DisposalDetails
+        fields = '__all__'
+
+
+class RemarksSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Remarks
         fields = '__all__'

@@ -8,9 +8,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import User, FacilityDetails, WasteType, DisposalDetails, FormDetails, RequestStatus
+from .models import User, FacilityDetails, WasteType, DisposalDetails, FormDetails, RequestStatus, Remarks
 from .serializer import UserSerializer, FacilityDetailsSerializer, DisposalDetailsSerializer, WasteTypeSerializer, \
-    FormDetailsSerializer, RequestStatusSerializer
+    FormDetailsSerializer, RequestStatusSerializer, RemarksSerializer
 
 
 class UserList(APIView):
@@ -80,7 +80,7 @@ class LoginView(APIView):
             }
 
             redirect_page = redirect_map.get(designation, 'invalid-designation-page')
-            return Response({'token': token.key, 'redirect': redirect_page, 'designation': designation, 'name':name})
+            return Response({'token': token.key, 'redirect': redirect_page, 'designation': designation, 'name': name})
 
         return Response({'error': 'Invalid user_id or password'}, status=401)
 
@@ -284,6 +284,7 @@ class FormDetailsAPIView(APIView):
         form_details.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class FormDetailsListView(generics.ListAPIView):
     serializer_class = FormDetailsSerializer
 
@@ -331,3 +332,13 @@ class DisposalDetailsAPIView(APIView):
         disposal_details = self.get_object(pk)
         disposal_details.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RemarksListCreateView(generics.ListCreateAPIView):
+    queryset = Remarks.objects.all()
+    serializer_class = RemarksSerializer
+
+
+class RemarksRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Remarks.objects.all()
+    serializer_class = RemarksSerializer

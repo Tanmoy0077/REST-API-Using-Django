@@ -148,3 +148,12 @@ class DisposalDetails(models.Model):
 
     class Meta:
         db_table = 'disposal_details'
+
+
+class Remarks(models.Model):
+    request_no = models.IntegerField(primary_key=True)
+    sm_remarks = models.CharField(max_length=200, blank=True, null=True)
+    rm_remarks = models.CharField(max_length=200, blank=True, null=True)
+
+    def __str__(self):
+        return f"Request No: {self.request_no}"

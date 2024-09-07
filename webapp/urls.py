@@ -3,7 +3,7 @@ from .views import UserDetail, UserList, LoginView, LogoutView, FacilityDetailsD
     WasteTypeListCreate, WasteTypeDetail, \
     RequestStatusListCreateAPIView, FormDetailsListCreateAPIView, FormDetailsAPIView, \
     DisposalDetailsListCreateAPIView, RequestStatusDetailAPIView, DisposalDetailsAPIView, UniqueFacilityNames, \
-    FormDetailsListView
+    FormDetailsListView, RemarksRetrieveUpdateDestroyView, RemarksListCreateView
 
 urlpatterns = [
     path('login/', LoginView.as_view()),
@@ -27,4 +27,8 @@ urlpatterns = [
 
     path('disposal_details/', DisposalDetailsListCreateAPIView.as_view(), name='disposal_details_list_create'),
     path('disposal_details/<str:pk>/', DisposalDetailsAPIView.as_view(), name='disposal_details_detail'),
+
+    path('remarks/', RemarksListCreateView.as_view(), name='remarks-list-create'),
+    path('remarks/<int:request_no>/', RemarksRetrieveUpdateDestroyView.as_view(),
+         name='remarks-retrieve-update-destroy')
 ]
