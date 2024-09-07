@@ -1,3 +1,5 @@
+from random import choices
+
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.db import models
 
@@ -74,6 +76,7 @@ class RequestStatus(models.Model):
     ]
 
     request_no = models.IntegerField(primary_key=True)
+    facility_name = models.CharField(max_length=ITEM_MAX_LENGTH)
     no_of_items = models.IntegerField()
     total_qty = models.DecimalField(max_digits=7, decimal_places=2)
     sending_engineer = models.CharField(max_length=ITEM_MAX_LENGTH, blank=True, null=True)
@@ -82,9 +85,11 @@ class RequestStatus(models.Model):
     receiving_manager = models.CharField(max_length=ITEM_MAX_LENGTH, blank=True, null=True)
     disposing_engineer = models.CharField(max_length=ITEM_MAX_LENGTH, blank=True, null=True)
     disposing_manager = models.CharField(max_length=ITEM_MAX_LENGTH, blank=True, null=True)
-    sender_approval = models.CharField(max_length=10, choices=APPROVAL_CHOICES)
-    receiver_approval = models.CharField(max_length=10, choices=APPROVAL_CHOICES)
-    disposal_confirmation = models.CharField(max_length=10, choices=APPROVAL_CHOICES)
+    sender_approval = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='No')
+    make_changes = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='No')
+    receiver_validated = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='No')
+    receiver_approval = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='No')
+    disposal_confirmation = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='No')
 
     class Meta:
         db_table = 'request_status'

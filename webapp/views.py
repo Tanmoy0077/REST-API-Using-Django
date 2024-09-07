@@ -67,6 +67,7 @@ class LoginView(APIView):
             token, created = Token.objects.get_or_create(user=user)
             designation = user.designation.lower()
             name = user.name
+            facility_name = user.facility_name()
 
             redirect_map = {
                 'admin': 'admin',
@@ -80,7 +81,13 @@ class LoginView(APIView):
             }
 
             redirect_page = redirect_map.get(designation, 'invalid-designation-page')
-            return Response({'token': token.key, 'redirect': redirect_page, 'designation': designation, 'name': name})
+            return Response({
+                'token': token.key,
+                'redirect': redirect_page,
+                'designation': designation,
+                'name': name,
+                'facility':facility_name
+            })
 
         return Response({'error': 'Invalid user_id or password'}, status=401)
 
@@ -243,6 +250,44 @@ class RequestStatusDetailAPIView(APIView):
         request_status.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class FacilityRequestsAPIView(APIView):
+    def get(self, request, facility, *args, **kwargs):
+        try:
+            requests = RequestStatus.objects.filter(facility_name=facility)
+            if not requests.exists():
+                return Response(
+                    {'error': 'No requests found for the specified facility.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            serializer = RequestStatusSerializer(requests, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {'error': 'An unexpected error occurred.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+class ReceiverApprovalAPIView(APIView):
+    def get(self, request, approval, *args, **kwargs):
+        try:
+            requests = RequestStatus.objects.filter(receiver_approval=approval)
+            if not requests.exists():
+                return Response(
+                    {'error': 'No requests found for the specified facility.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            serializer = RequestStatusSerializer(requests, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {'error': 'An unexpected error occurred.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 # FormDetails API View
 class FormDetailsListCreateAPIView(APIView):
