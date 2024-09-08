@@ -1,5 +1,3 @@
-from random import choices
-
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.db import models
 
@@ -89,6 +87,7 @@ class RequestStatus(models.Model):
     make_changes = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='No')
     receiver_validated = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='No')
     receiver_approval = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='No')
+    disposal_validated = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='No')
     disposal_confirmation = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='No')
 
     class Meta:
@@ -120,6 +119,7 @@ class FormDetails(models.Model):
     nature_material = models.CharField(max_length=150)
     waste_type = models.CharField(max_length=5, choices=WASTE_TYPE_CHOICES)
     qty = models.DecimalField(max_digits=7, decimal_places=2)
+    disposed = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'form_details'
