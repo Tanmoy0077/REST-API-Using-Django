@@ -21,7 +21,7 @@ urlpatterns = [
 
     path('request_status/', RequestStatusListCreateAPIView.as_view(), name='request_status_list_create'),
     path('request_status/<int:pk>/', RequestStatusDetailAPIView.as_view(), name='request_status_detail'),
-    path('api/request_status/<str:facility>/', FacilityRequestsAPIView.as_view(), name='facility_requests_api'),
+    path('facility_status/<str:facility>/', FacilityRequestsAPIView.as_view(), name='facility_requests_api'),
 
     path('form_details/', FormDetailsListCreateAPIView.as_view(), name='form_details_list_create'),
     path('form_details/<str:pk>/', FormDetailsAPIView.as_view(), name='form_details_detail'),

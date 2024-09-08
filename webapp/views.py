@@ -67,7 +67,7 @@ class LoginView(APIView):
             token, created = Token.objects.get_or_create(user=user)
             designation = user.designation.lower()
             name = user.name
-            facility_name = user.facility_name()
+            facility_name = user.facility_name
 
             redirect_map = {
                 'admin': 'admin',
@@ -239,7 +239,7 @@ class RequestStatusDetailAPIView(APIView):
 
     def put(self, request, pk):
         request_status = self.get_object(pk)
-        serializer = RequestStatusSerializer(request_status, data=request.data)
+        serializer = RequestStatusSerializer(request_status, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -318,7 +318,7 @@ class FormDetailsAPIView(APIView):
 
     def put(self, request, pk):
         form_details = self.get_object(pk)
-        serializer = FormDetailsSerializer(form_details, data=request.data)
+        serializer = FormDetailsSerializer(form_details, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
