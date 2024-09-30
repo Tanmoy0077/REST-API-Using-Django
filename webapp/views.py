@@ -7,6 +7,7 @@ from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.db.models import Sum
 
 from .models import User, FacilityDetails, WasteType, DisposalDetails, FormDetails, RequestStatus, Remarks
 from .serializer import UserSerializer, FacilityDetailsSerializer, DisposalDetailsSerializer, WasteTypeSerializer, \
@@ -367,7 +368,7 @@ class DisposalDetailsAPIView(APIView):
 
     def put(self, request, pk):
         disposal_details = self.get_object(pk)
-        serializer = DisposalDetailsSerializer(disposal_details, data=request.data)
+        serializer = DisposalDetailsSerializer(disposal_details, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -387,3 +388,32 @@ class RemarksListCreateView(generics.ListCreateAPIView):
 class RemarksRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Remarks.objects.all()
     serializer_class = RemarksSerializer
+
+
+class PropellantDataView(APIView):
+    def get(self, request, *args, **kwargs):
+        units = ['U1', 'U2']
+        waste_types = ['A', 'B', 'C', 'D', 'E']
+
+        def calculate_totals(unit):
+            available_data = DisposalDetails.objects.filter(unit=unit).values('waste_type').annotate(
+                total_stored_qty=Sum('stored_qty'),
+                total_disposed_qty=Sum('disposed_qty')
+            )
+            totals = {waste_type: 0 for waste_type in waste_types}
+            print(available_data)
+            # print(disposed_data)
+            for item in available_data:
+                if item['waste_type'] in totals:
+                    totals[item['waste_type']] = item['total_stored_qty']
+            return totals
+
+
+        available_data = {unit: calculate_totals(unit) for unit in units}
+        disposed_data = {unit: calculate_totals(unit) for unit in units}
+
+
+        return Response({
+            'availableData': available_data,
+            'disposedData': disposed_data
+        }, status=status.HTTP_200_OK)

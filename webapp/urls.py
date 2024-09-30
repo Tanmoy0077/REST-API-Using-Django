@@ -1,10 +1,5 @@
 from django.urls import path
-from .views import UserDetail, UserList, LoginView, LogoutView, FacilityDetailsDetail, FacilityDetailsListCreate, \
-    WasteTypeListCreate, WasteTypeDetail, \
-    RequestStatusListCreateAPIView, FormDetailsListCreateAPIView, FormDetailsAPIView, \
-    DisposalDetailsListCreateAPIView, RequestStatusDetailAPIView, DisposalDetailsAPIView, UniqueFacilityNames, \
-    FormDetailsListView, RemarksRetrieveUpdateDestroyView, RemarksListCreateView, FacilityRequestsAPIView, \
-    ReceiverApprovalAPIView
+from .views import *
 
 urlpatterns = [
     path('login/', LoginView.as_view()),
@@ -33,5 +28,6 @@ urlpatterns = [
 
     path('remarks/', RemarksListCreateView.as_view(), name='remarks-list-create'),
     path('remarks/<int:request_no>/', RemarksRetrieveUpdateDestroyView.as_view(),
-         name='remarks-retrieve-update-destroy')
+         name='remarks-retrieve-update-destroy'),
+    path('propellant-data/', PropellantDataView.as_view(), name='propellant-data'),
 ]
