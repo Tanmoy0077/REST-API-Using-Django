@@ -395,22 +395,27 @@ class PropellantDataView(APIView):
         units = ['U1', 'U2']
         waste_types = ['A', 'B', 'C', 'D', 'E']
 
-        def calculate_totals(unit):
+        def calculate_totals(unit, data):
             available_data = DisposalDetails.objects.filter(unit=unit).values('waste_type').annotate(
                 total_stored_qty=Sum('stored_qty'),
                 total_disposed_qty=Sum('disposed_qty')
             )
-            totals = {waste_type: 0 for waste_type in waste_types}
-            print(available_data)
-            # print(disposed_data)
+            stored_total = {waste_type: 0 for waste_type in waste_types}
+            disposed_total = {waste_type: 0 for waste_type in waste_types}
+            
             for item in available_data:
-                if item['waste_type'] in totals:
-                    totals[item['waste_type']] = item['total_stored_qty']
-            return totals
+                print(item)
+                if item['waste_type'] in stored_total:
+                    stored_total[item['waste_type']] = item['total_stored_qty']
+                    disposed_total[item['waste_type']] = item['total_disposed_qty']
+            if data == "stored":
+                return stored_total
+            
+            return disposed_total
 
 
-        available_data = {unit: calculate_totals(unit) for unit in units}
-        disposed_data = {unit: calculate_totals(unit) for unit in units}
+        available_data = {unit: calculate_totals(unit, "stored") for unit in units}
+        disposed_data = {unit: calculate_totals(unit, "disposed") for unit in units}
 
 
         return Response({

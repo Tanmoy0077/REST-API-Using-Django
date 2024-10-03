@@ -27,7 +27,7 @@ urlpatterns = [
     path('disposal_details/<str:pk>/', DisposalDetailsAPIView.as_view(), name='disposal_details_detail'),
 
     path('remarks/', RemarksListCreateView.as_view(), name='remarks-list-create'),
-    path('remarks/<int:request_no>/', RemarksRetrieveUpdateDestroyView.as_view(),
+    path('remarks/<int:pk>/', RemarksRetrieveUpdateDestroyView.as_view(),
          name='remarks-retrieve-update-destroy'),
     path('propellant-data/', PropellantDataView.as_view(), name='propellant-data'),
 ]
