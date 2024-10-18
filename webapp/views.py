@@ -404,7 +404,6 @@ class PropellantDataView(APIView):
             disposed_total = {waste_type: 0 for waste_type in waste_types}
             
             for item in available_data:
-                print(item)
                 if item['waste_type'] in stored_total:
                     stored_total[item['waste_type']] = item['total_stored_qty']
                     disposed_total[item['waste_type']] = item['total_disposed_qty']
